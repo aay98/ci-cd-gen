@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 import unittest
-
+import os
+import sys
 from app import generator
 
 def test_sample_single_word():
