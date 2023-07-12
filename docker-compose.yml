@@ -10,6 +10,9 @@ services:
       - 0.0.0.0:80:555
     depends_on:
       - db
+    environment:
+      STATSD_HOST: "statsd-exporter"
+      STATSD_PORT: "9125"
   db:
     image: postgres:12.0-alpine
     volumes:
@@ -20,6 +23,64 @@ services:
       - POSTGRES_USER=alpine
       - POSTGRES_PASSWORD=alpine
       - POSTGRES_DB=bd
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus:/etc/prometheus/
+    container_name: prometheus
+    hostname: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+
+  statsd-exporter:
+    image: prom/statsd-exporter:latest
+    ports:
+      - "9125:9125"
+      - "9102:9102"
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    container_name: exporter
+    hostname: exporter
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points
+      - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+    ports:
+      - 9100:9100
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+
+ 
+  grafana:
+    image: grafana/grafana:latest
+    user: root
+    depends_on:
+      - prometheus
+    ports:
+      -  0.0.0.0:443:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+
+
 
 volumes:
   postgres_data:

@@ -16,6 +16,7 @@ def sample(l, n = 1):
     return result
 
 def insert_phrase(phrase_name):
+    
     """ insert a new phrase into the phrases table """
     sql = """INSERT INTO phrases(phrase_name)
              VALUES(%s) RETURNING phrase_id;"""
