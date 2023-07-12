@@ -2,8 +2,6 @@ name: Publish on Docker Hub and Deploy
 
 on:
   push:
-    tags:
-      - '*'
     branches:
       - '*'
 
@@ -39,10 +37,10 @@ jobs:
       - uses: actions/checkout@master
       - name: Build image
         # Собираем image и называем его так как указано в hub.docker т.е. login/repository:version
-        run: docker build -t $LOGIN/$NAME:${GITHUB_REF:11} -f Dockerfile .
+        run: docker-compose build
       - name: Push image to docker.io
         # Пушим образ в registry
-        run: docker push $LOGIN/$NAME:${GITHUB_REF:11}
+        run: docker-compose push $LOGIN/$NAME:${GITHUB_REF:11}
 
   # deploy:
   #   # Если мы успешно собрали контейнер и отправили в registry, то делаем хук деплоймент серверу
