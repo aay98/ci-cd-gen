@@ -3,10 +3,8 @@ name: Run tests on any Push event
 # Они будт тестироваться перед сборкой
 on:
   push:
-    tags:
-      - '*'
     branches:
-      - '*'
+      - 'develop'
 jobs:
   run_tests:
     runs-on: ubuntu-latest
