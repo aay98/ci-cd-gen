@@ -56,7 +56,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         port: 22
         script: |
-          cd ~/home/aay98/ci-cd-gen
+          cd /home/aay98/ci-cd-gen
           docker-compose down
           git pull
           git reset --hard HEAD
